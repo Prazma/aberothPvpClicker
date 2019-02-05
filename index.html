@@ -371,6 +371,7 @@
         
         <div id="loader">
             loading game...
+		<button onclick="logout()">Logout</button>
         </div>
         
         <script>
@@ -553,6 +554,11 @@
                 opponent = "";
                 isFighting = false;
             }
+		
+	function logout() {
+		localStorage.clear();
+		location.reload();
+	}
             
             var startListening = function() {
 				db.on('child_added', function(snapshot) {
