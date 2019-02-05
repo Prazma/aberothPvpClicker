@@ -1,0 +1,688 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Aberoth PvP Clicker</title>
+        <meta name="viewport" content="width=device-width,user-scalable=no">
+        <script src='https://cdn.firebase.com/js/client/2.4.0/firebase.js'></script>
+        <style>
+            body {
+                background: #3d3429;
+                -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+            }
+            .gameport {
+                background: url("./img/tomb.png");
+                background-repeat: no-repeat;
+                background-size: 100%;
+                background-color: #8f764b;
+                position: absolute;
+                top:20px;
+                left:20px;
+                width: 640px;
+                height: 480px;
+                border: 20px ridge tan;
+            }
+            .playerOneContainer {
+                position: absolute;
+                top: 250px;
+                left: 260px;
+                background: transparent;
+                border:none;
+                outline: none;
+            }
+            #playerOne {
+                height: 100px;
+            }
+            #playerTwoContainer {
+                position: absolute;
+                top: 250px;
+                left: 295px;
+                background: transparent;
+                border:none;
+                outline: none;
+            }
+            .playerTwo {
+                height: 100px;
+            }
+            .healthBarWrapper {
+                position: absolute;
+                top: 115px;
+                left: 655px;
+                height: 400px;
+                width: 20px;
+                background: #404040;
+                border: 1px solid #fff;
+            }
+            #healthObject {
+                width: 100%;
+                max-height: 400px;
+                height: 400px;
+                background: #ff4040;
+                border-top: 1px solid #fff;
+                position: absolute;
+                bottom: 0;
+            }
+            .firstThin {
+                position: absolute;
+                top: 440px;
+                height: 40px;
+                left: 620px;
+            }
+            .secondThin {
+                position: absolute;
+                height: 40px;
+                top: 385px;
+                left: 620px;
+            }
+            .alchBag {
+                position: absolute;
+                top:330px;
+                left:620px;
+                height: 40px;
+            }
+            #myNameTag {
+                color: #fff;
+                text-shadow: 0px 0px 1px #000;
+                font-size: 15px;
+                position: absolute;
+                top: 185px;
+                left: 260px;
+                display: block;
+            }
+            #opNameTag {
+                color: #fff;
+                text-shadow: 0px 0px 1px #000;
+                font-size: 15px;
+                position: absolute;
+                top: 185px;
+                left: 298px;
+                display: block;
+            }
+            .dmgTag {
+                font-size: 15px;
+                height: 15px;
+            }
+            .phy {
+                color: #FFEB3B;
+            }
+            .emb {
+                color: #FF9800;
+            }
+            .dra {
+                color: #4c4c4c;
+            }
+            #dmgShowWrapperMe {
+                position: absolute;
+                top: 200px;
+                left: 260px;
+                height: 46px;
+                overflow: auto;
+            }
+            #dmgShowWrapperYou {
+                position: absolute;
+                top: 200px;
+                left: 305px;
+                height: 46px;
+                overflow: auto;
+            }
+            .consumeWrapperFThin {
+                position: absolute;
+                display: flex;
+                position: absolute;
+                display: flex;
+                top: 442px;
+                left: 480px;
+            }
+            .consumeAlchBag {
+                position: absolute;
+                display: flex;
+                position: absolute;
+                display: flex;
+                top: 332px;
+                left: 520px;
+            }
+            .scrolls {
+                height: 30px;
+            }
+            .scrollWrapper {
+                background: transparent;
+                border:none;
+                outline: none;
+            }
+            .scrollWrapper:disabled {
+                filter: brightness(70%);
+            }
+            #log {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background: #3d3429;
+                text-align: center;
+                color: #fff;
+            }
+            input {
+                margin-bottom: 20px;
+            }
+            .myMessage {
+                width: 90%;
+                max-width: 500px;
+                margin-right:auto;
+                margin-left: auto;
+            }
+            a {
+                color: #2196F3;
+            }
+            #lobby {
+                background: #3d3429;
+                color: #fff;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                display: none;
+            }
+            .listElement {
+                background: #9a7e5d;
+                padding: 10px;
+                border-radius: 6px;
+                width: 90%;
+                max-width: 272px;
+                margin-right: auto;
+                margin-left: auto;
+                margin-bottom: 5px;
+            }
+            .listWrapper {
+                height: 30vh;
+                background: #71614e;
+                overflow: auto;
+            }
+            .sectorTitle {
+                font-size: 25px;
+                text-align: center;
+                border-bottom: 1px solid #fefefe;
+            }
+            #notification {
+                position: fixed;
+                top: 0;
+                left: 0;
+                text-align: center;
+                width: 100%;
+                background: rgba(103, 58, 183, 0.8);
+                display: none;
+            }
+            #notificationTwo {
+                position: fixed;
+                top: 0;
+                left: 0;
+                text-align: center;
+                width: 100%;
+                background: rgba(103, 58, 183, 0.8);
+                display: none;
+            }
+            #loader {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background: #3d3429;
+                color: #fff;
+            }
+            .prompt {
+                color: #cfcfcf;
+            }
+            .oppoBarWrap {
+                height: 30px;
+                width: 200px;
+                background: rgba(64, 64, 64, 0.7);
+                position: absolute;
+                top: 50px;
+                left: 255px;
+            }
+            #oopoHpObj {
+                width: 200px;
+                max-width: 200px;
+                height: 30px;
+                background: #ff404091;
+                color: #fff;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="gameport">
+            <button class="playerOneContainer">
+                <img id="playerOne" src="./img/abWhite.png">
+            </button>
+            
+            <span id="myNameTag" class="ourNameTags">p1</span>
+            <div id="dmgShowWrapperMe">
+            </div>
+            
+            <button id="playerTwoContainer">
+                <div class="dmgShowWrapper"></div>
+                <img class="playerTwo" src="./img/oppo.png">
+            </button>
+            
+            <span id="opNameTag" class="ourNameTags">p2</span>
+            <div id="dmgShowWrapperYou">
+            </div>
+            
+        </div>
+        <div>
+            <!--first thin spellbook-->
+            <img src="./img/thin.png" class="firstThin">
+            <div class="consumeWrapperFThin">
+                <button id="epotoLaunch" class="scrollWrapper">
+                    <img class="scrolls" src="./img/epoto.png">
+                </button>
+                <button id="triLaunch" class="scrollWrapper">
+                    <img class="scrolls" src="./img/tri.png">
+                </button>
+                <button id="emberLaunch" class="scrollWrapper">
+                    <img class="scrolls" src="./img/ember.png">
+                </button>
+            </div>
+            <!--second thin spellbook-->
+            <img src="./img/thin.png" class="secondThin">
+            <!--alch bag-->
+            <img src="./img/alchBag.png" class="alchBag">
+            <div class="consumeAlchBag">
+                <button id="xliveLauncher" class="scrollWrapper">
+                    <img class="scrolls" src="./img/xlives.png">
+                </button>
+                <button id="lifeLauncher" class="scrollWrapper">
+                    <img class="scrolls" src="./img/life.png">
+                </button>
+            </div>
+        </div>
+        
+        <div class="healthBarWrapper">
+            <div id="healthObject"></div>
+        </div>
+        
+        <div class="oppoBarWrap">
+            <div id="oopoHpObj"></div>
+        </div>
+        
+        <div id="log">
+            <h2>Aberoth PvP Clicker Login</h2>
+            <span>Name:</span><br>
+            <input id="username"><br>
+            <select id="playerAppearance">
+                <option value="light">Light Character</option>
+                <option value="dark">Dark Character</option>
+            </select><br><br>
+            <button id="logTrigger">Login</button>
+            
+            <hr>
+            <div class="myMessage">
+                <strong>Hey! Why are there no password?: </strong>
+                <span>This is because of plain laziness and the quality of this being my "side-side-side-project". And also, who cares about setting password unless I make an update where you actually collect gear by collecting gold when winning... (<a href="https://www.reddit.com/user/tomocode">contact me (reddit)</a> for updates and suggestion btw)</span>
+                <br><br>
+                <strong>Note that this game wont work in private or incognito tab. Use a different browser or something if you wanna use alts (grin)</strong>
+            </div>
+            <hr>
+            <div class="myMessage">
+                <strong>How to play: </strong>
+                <span>Click on the opponent to hit them (click as fast as you can)</span><br>
+                <span>Use consumes wisely (u will keep all consumes 100%, but there is downtime to consider)</span>
+            </div>
+            <hr>
+            <div class="myMessage" style="text-align: left;">
+                <strong>Updates!! : </strong><br><br>
+                <span><strong>Febuary 5, 2019</strong></span><br>
+                <span>- Released beta. Only basic PvP and nothing else. If I get <strong>over 10 upvotes</strong> on my <a>reddit post</a>, I will continue updating this.</span>
+            </div>
+        </div>
+        
+        <div id="lobby">
+            <div id="listOfPeople">
+                <div class="sectorTitle">List of Players</div>
+                <div class="listWrapper" id="accList">
+                    
+                </div>
+            </div>
+            
+            <div id="activityLog">
+                <div class="sectorTitle">Activity Log</div>
+                <div class="listWrapper" id="actList">
+                    
+                </div>
+            </div>
+            
+            <div id="notification">
+                Your invite was accepted by <span id="opPlayerName"></span>.<br>
+                You battle will begin in 5 seconds!
+            </div>
+            
+            <div id="notificationTwo">
+                Your accepted a match with <span id="opPlayerNameTwo"></span>.<br>
+                You battle will begin in 5 seconds!
+            </div>
+        </div>
+        
+        <div id="loader">
+            loading game...
+        </div>
+        
+        <script>
+            var loginName = [];
+            var challenging = "";
+            //firebase is nice when u lazy and try to finish this in a day... :)
+            var db = new Firebase("https://crunchfi.firebaseio.com/");
+            
+            //elements
+            var logTrigger = document.getElementById("logTrigger");
+            var username = document.getElementById("username");
+            var playerAppearance = document.getElementById("playerAppearance");
+            
+            var log = document.getElementById("log");
+            var lobby = document.getElementById("lobby");
+            
+            var accList = document.getElementById("accList");
+            var actList = document.getElementById("actList");
+            
+            var notification = document.getElementById("notification");
+            var notificationTwo = document.getElementById("notificationTwo");
+            
+            var loader = document.getElementById("loader");
+            
+            var myNameTag = document.getElementById("myNameTag");
+            var opNameTag = document.getElementById("opNameTag");
+            
+            var opPlayerName = document.getElementById("opPlayerName");
+            var opPlayerNameTwo = document.getElementById("opPlayerNameTwo");
+            
+            var playerTwoContainer = document.getElementById("playerTwoContainer");
+            
+            var playerOne = document.getElementById("playerOne");
+            
+            //sounds
+            var emberS = new Audio("./sound/ember.wav");
+            var drinkS = new Audio("./sound/gluglug.mp3");
+            var whackS = new Audio("./sound/phy.wav");
+            
+            //consumes
+            var epotoLaunch = document.getElementById("epotoLaunch");
+            var triLaunch = document.getElementById("triLaunch");
+            var emberLaunch = document.getElementById("emberLaunch");
+            
+            var xliveLauncher = document.getElementById("xliveLauncher");
+            var lifeLauncher = document.getElementById("lifeLauncher");
+            
+            //important variables
+            var myHealth = 400;
+            var urHealth = 400;
+            var opponent = "";
+            var modeon = "locked";
+            var isFighting = false;
+            
+            window.onload = function () {
+                if( localStorage.loggeduser ) {
+                    log.style.display = "none";
+                    lobby.style.display = "block";
+                    if( localStorage.theme = "light" ) {
+                        playerOne.src = "./img/abWhite.png";
+                    } else {
+                        playerOne.src = "./img/abBlack.png"
+                    }
+                    
+                    //just to insure all past data is downloaded
+                    setTimeout( function () {
+                        loader.style.display = "none";
+                        modeon = "unlocked";
+                    }, 2000)
+                } else {
+                    //just to insure all past data is downloaded
+                    setTimeout( function () {
+                        loader.style.display = "none";
+                        modeon = "unlocked";
+                    }, 2000)
+                }
+            }
+            
+            logTrigger.onclick = function () {
+                if( username.value.length != 0 && loginName.indexOf(username.value.toLowerCase()) == -1 ) {
+                    db.push({type:"acc",name:username.value.toLowerCase()});
+                    localStorage.loggeduser = username.value;
+                    localStorage.theme = playerAppearance.value;
+                    
+                    location.reload();
+                } else {
+                    alert("The username is taken, or your just tried to challenge me by not filling in the form.");
+                }
+            }
+            
+            function challenge(name) {
+                if( challenging == "" ) {
+                    db.push({type:"challenge",namex:name,nameq:localStorage.loggeduser});
+                    challenging = name;
+                    document.getElementById("chll"+name).innerHTML = "waiting...";
+                } else {
+                    alert("You may only challenge one player at a time. If there is no response in a while, please reload this page (I'll fix this issue).");
+                }
+            }
+            
+            function battleStart(me,you) {
+                myNameTag.innerHTML = me;
+                opNameTag.innerHTML = you;
+                oopoHpObj.innerHTML = you;
+                opponent = you;
+                myHealth = 400;
+                urHealth = 400;
+                document.getElementById("oopoHpObj").style.width = "200px";
+                isFighting = true;
+                
+                challenging = "";
+                document.getElementById("chll"+you).innerHTML = "Challenge this player!";
+                setTimeout( function () {
+                    lobby.style.display = "none";
+                    log.style.display = "none";
+                    notification.style.display = "block";
+                    notificationTwo.style.display = "none";
+                    
+                    playerTwoContainer.onclick = function () {
+                        db.push({type:"attack",attype:"physical",amount:Math.floor(Math.random()*(10-1)+1),to:you});
+                    }
+                    
+                    epotoLaunch.onclick = function () {
+                        db.push({type:"attack",attype:"drain",amount:20,to:you});
+                        db.push({type:"say",ctype:"scroll",who:me,msg:"Vita epoto"});
+                        epotoLaunch.disabled = true;
+                        setTimeout( function () {
+                            epotoLaunch.disabled = false;
+                        }, 10000)
+                    }
+                    
+                    triLaunch.onclick = function () {
+                        db.push({type:"attack",attype:"ember",amount:30,to:you});
+                        db.push({type:"attack",attype:"ember",amount:30,to:you});
+                        db.push({type:"attack",attype:"ember",amount:30,to:you});
+                        db.push({type:"say",ctype:"scroll",who:me,msg:"Carbonis trincendium"});
+                        triLaunch.disabled = true;
+                        setTimeout( function () {
+                            triLaunch.disabled = false;
+                        }, 7000)
+                    }
+                    
+                    emberLaunch.onclick = function () {
+                        db.push({type:"attack",attype:"ember",amount:30,to:you});
+                        db.push({type:"say",ctype:"scroll",who:me,msg:"Carbonis incendium"});
+                        emberLaunch.disabled = true;
+                        setTimeout( function () {
+                            emberLaunch.disabled = false;
+                        }, 4000)
+                    }
+                    
+                    lifeLauncher.onclick = function () {
+                        db.push({type:"say",ctype:"drink",who:me,msg:"(glug glug)"});
+                        db.push({type:"heal",amount:10,who:me});
+                        drinkS.play();
+                        lifeLauncher.disabled = true
+                        setTimeout( function () {
+                           lifeLauncher.disabled = false; 
+                        },2000)
+                    }
+                    
+                    xliveLauncher.onclick = function () {
+                        db.push({type:"say",ctype:"drink",who:me,msg:"(glug glug)"});
+                        db.push({type:"heal",amount:65,who:me});
+                        drinkS.play();
+                        
+                        xliveLauncher.disabled = true
+                        setTimeout( function () {
+                           xliveLauncher.disabled = false; 
+                        },4000)
+                    }
+                    
+                }, 5000)
+            }
+            
+            function endBattle() {
+                lobby.style.display = "block";
+                notification.style.display = "none";
+                notificationTwo.style.display = "none";
+                opponent = "";
+                isFighting = false;
+            }
+            
+            var startListening = function() {
+				db.on('child_added', function(snapshot) {
+					var snap = snapshot.val();
+					if( snap.type == "acc" ) {
+					    loginName.push( snap.name );
+					    actList.innerHTML += "<p><strong>" + snap.name + "</strong> joined this game!</p>";
+					    if( snap.name != localStorage.loggeduser ) {
+					        accList.innerHTML += '<div class="listElement"><strong>'+snap.name+'</strong><button id="chll'+snap.name+'" onclick="challenge(\''+snap.name+'\')">Challenge this player!</button></div>';
+					    }
+		            } else if( snap.type == "postResult" ) {
+    				    actList.innerHTML += "<p>" + snap.message + "</p>";
+    				}
+		            //below contains in game stuff. so, i will make this carefully
+		            if( modeon == "unlocked" ) {
+    		            if( snap.type == "challenge" ) {
+    			            if( snap.namex == localStorage.loggeduser ) {
+    			                if( isFighting == true ) {
+        					        db.push({type:"isFighting",to:snap.nameq,from:snap.namex});
+    			                } else {
+    			                    if (confirm(snap.nameq + " challenged you to a PvP match! Accept?")) {
+        					            actList.innerHTML += "<p><strong>"+snap.nameq+"</strong> challenged <strong>"+snap.nameq+"</strong> to a PvP match!!!</p>";
+        					            db.push({type:"acception",namex:snap.namex,nameq:snap.nameq});
+        					            
+        					            opPlayerNameTwo.innerHTML = snap.nameq;
+        					            notificationTwo.style.display = "block";
+        					            battleStart(snap.namex,snap.nameq);
+        					        } else {
+        					            actList.innerHTML += "<p><strong>"+snap.nameq+"</strong> challenged <strong>"+snap.nameq+"</strong> to a PvP match!!!</p>";
+        					            db.push({type:"decline",namex:snap.namex,nameq:snap.nameq});
+        					        }
+    			                }
+    					    } else {
+    					        actList.innerHTML += "<p><strong>"+snap.nameq+"</strong> challenged <strong>"+snap.nameq+"</strong> to a PvP match!!!</p>";
+    					    }
+    					} else if( snap.type == "decline" ) {
+    					    if( snap.nameq == localStorage.loggeduser ) {
+    					        actList.innerHTML += "<p><strong>"+snap.namex+"</strong> has delined <strong>"+snap.nameq+"</strong>'s challenge.... :(</p>";
+    					        alert(snap.namex + " has declined your challenge :(");
+    					        challenging = "";
+                                document.getElementById("chll"+snap.namex).innerHTML = "Challenge this player!";
+    					        
+    					    } else {
+    					        actList.innerHTML += "<p><strong>"+snap.namex+"</strong> has delined <strong>"+snap.nameq+"</strong>'s challenge.... :(</p>";
+    					    }
+    					} else if( snap.type == "acception" ) {
+    					    if( snap.nameq == localStorage.loggeduser ) {
+    					        
+    					        opPlayerName.innerHTML = snap.namex;
+    					        notification.style.display = "block";
+    					        battleStart(snap.nameq,snap.namex);
+    					        actList.innerHTML += "<p><strong>"+snap.namex+"</strong> has accepted <strong>"+snap.nameq+"</strong>'s challenge!!!</p>";
+    					    } else {
+    					        actList.innerHTML += "<p><strong>"+snap.namex+"</strong> has accepted <strong>"+snap.nameq+"</strong>'s challenge!!!</p>";
+    					    }
+    					} else if( snap.type == "isFighting" ) {
+    					    if( snap.to == localStorage.loggeduser ) {
+    					        alert( snap.from + " is currently busy fighting someone else!!");
+    					        challenging = "";
+                                document.getElementById("chll"+snap.from).innerHTML = "Challenge this player!";
+    					    }
+    					} else if( snap.type == "attack" ) {
+    					    if( snap.to == localStorage.loggeduser && isFighting == true ) {
+    					        myHealth -= parseInt(snap.amount);
+    					        document.getElementById("healthObject").style.height = myHealth + "px";
+    					        if( snap.attype == "physical" ) {
+    					            document.getElementById("dmgShowWrapperMe").innerHTML += "<div class='dmgTag phy'>Ow (" + snap.amount + ")</div>";
+    					            whackS.play();
+    					        } else if( snap.attype == "drain" ) {
+    					            document.getElementById("dmgShowWrapperMe").innerHTML += "<div class='dmgTag dra'>Ow (" + snap.amount + ")</div>";
+    					            whackS.play();
+    					            urHealth += parseInt(snap.amount);
+    					            document.getElementById("oopoHpObj").style.width = urHealth/2 + "px";
+    					        } else if( snap.attype == "ember" ) {
+    					            document.getElementById("dmgShowWrapperMe").innerHTML += "<div class='dmgTag emb'>Ow (" + snap.amount + ")</div>";
+    					            emberS.play();
+    					        }
+    					        document.getElementById("dmgShowWrapperMe").scrollTo(0,document.getElementById("dmgShowWrapperMe").scrollHeight);
+    					        if( myHealth < 0 ) {
+    					            db.push({type:"dead",who:snap.to})
+    					        }
+    					    } else if( snap.to == opponent && isFighting == true ) {
+    					        
+    					        if( snap.attype == "physical" ) {
+    					            document.getElementById("dmgShowWrapperYou").innerHTML += "<div class='dmgTag phy'>Ow (" + snap.amount + ")</div>";
+    					            whackS.play();
+    					        } else if( snap.attype == "drain" ) {
+    					            document.getElementById("dmgShowWrapperYou").innerHTML += "<div class='dmgTag dra'>Ow (" + snap.amount + ")</div>";
+    					            whackS.play();
+    					            myHealth += 20;
+    					            document.getElementById("healthObject").style.height = myHealth + "px";
+    					        } else if( snap.attype == "ember" ) {
+    					            document.getElementById("dmgShowWrapperYou").innerHTML += "<div class='dmgTag emb'>Ow (" + snap.amount + ")</div>";
+    					            emberS.play();
+    					        }
+    					        urHealth -= parseInt(snap.amount);
+    					        document.getElementById("oopoHpObj").style.width = urHealth/2 + "px";
+    					        document.getElementById("dmgShowWrapperYou").scrollTo(0,document.getElementById("dmgShowWrapperYou").scrollHeight);
+    					    }
+    					} else if( snap.type == "dead" ) {
+    					    if( snap.who == localStorage.loggeduser && isFighting == true || snap.who == opponent && isFighting == true ) {
+    					        if( snap.who == localStorage.loggeduser ) {
+    					            alert("you died.");
+    					            endBattle();
+    					        } else if( snap.who == opponent ) {
+    					            alert("you win.");
+    					            db.push({type:"postResult",message:localStorage.loggeduser + " won against " + opponent});
+    					            endBattle();
+    					        }
+    					    }
+    					} else if( snap.type == "say" ) {
+    					    if( snap.who == localStorage.loggeduser ) {
+        					    if( snap.ctype == "scroll" ) {
+        					        document.getElementById("dmgShowWrapperMe").innerHTML += "<div class='dmgTag'><i class='prompt'>"+snap.msg+"</i></div>";
+        					        document.getElementById("dmgShowWrapperMe").scrollTo(0,document.getElementById("dmgShowWrapperMe").scrollHeight);
+        					    }
+    					    }
+    					} else if( snap.type == "heal" ) {
+    					    if( snap.who == localStorage.loggeduser ) {
+    					        myHealth += parseInt(snap.amount);
+    					        document.getElementById("healthObject").style.height = myHealth + "px";
+    					    } else if( snap.who == opponent ) {
+    					        urHealth += parseInt(snap.amount);
+    					        document.getElementById("oopoHpObj").style.width = urHealth/2 + "px";
+    					    }
+    					}
+		            }
+				});
+			}
+			startListening();
+        </script>
+    </body>
+</html>
